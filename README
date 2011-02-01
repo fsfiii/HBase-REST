@@ -1,0 +1,20 @@
+perl HBase::REST
+
+HBase::REST is a perl client library for the HBase Stargate REST service.
+
+For now, it is very much an early work in progress and it barely implements
+list, get, and put functionality.
+
+usage:
+
+use HBase::REST;
+
+my $h = HBase::REST->new
+    or die "error: cannot connect to HBase @ $server";
+
+my @rows = $h->get('rest-test', 'row1');
+print Dumper(@rows);
+
+Please let me know if you are interested this module!
+
+frank at fejes dot net
