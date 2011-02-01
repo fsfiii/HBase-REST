@@ -1,4 +1,4 @@
-package HBase;
+package HBase::REST;
 
 use warnings;
 use strict;
@@ -11,7 +11,7 @@ use LWP::UserAgent;
 
 =head1 NAME
 
-HBase - perl binding for HBase REST/stargate interface
+HBase::REST - primitive perl binding for HBase REST/stargate interface
 
 =cut
 
@@ -67,13 +67,13 @@ sub put {
         warn "error: must provide at least a table, row, column, and value";
         return undef;
     }
-    my $path = sprintf '/%s/%s/%s', escape($table), escape($row), escape($col);
+
     my $ts = time;
-    $path .= sprintf '/%d', $ts;
+    my $path = sprintf '/%s/%s/%s/%s',
+        escape($table), escape($row), escape($col), $ts;
 
     my $xml_data = q|<?xml version='1.0' encoding='UTF-8' standalone='yes'?>|;
-    $xml_data .= q|<CellSet>|;
-    $xml_data .= sprintf q|<Row key='%s'>|, encode_base64($row); 
+    $xml_data .= sprintf q|<CellSet><Row key='%s'>|, encode_base64($row); 
 
     $xml_data .= q|<Cell |;
     $xml_data .= sprintf q|timestamp='%d' |, $ts;
@@ -84,15 +84,20 @@ sub put {
     $xml_data .= q|</Row></CellSet>|;
 
     $path = $self->{server} . $path;
-print $path, "\n";
-print $xml_data, "\n";
+    if ($self->{debug}) {
+        print "path: ", $path, "\n";
+        print "xml     ****\n";
+        print $xml_data, "\n";
+        print "end xml ****\n";
+    }
 
     my $ua = LWP::UserAgent->new;
     my $req = HTTP::Request->new(POST => $path);
     $req->content_type('text/xml');
     $req->content($xml_data);
     my $res = $ua->request($req);
-    print $res->as_string, "\n";
+
+    $res->is_success;
 }
 
 sub get {
@@ -119,7 +124,6 @@ sub get {
     my $res = $ua->request($req);
 
     return undef if not $res->is_success;
-
 
     my @rows = ();
 
