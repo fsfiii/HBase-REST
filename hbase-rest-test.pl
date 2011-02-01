@@ -4,13 +4,10 @@ use Modern::Perl;
 use HBase::REST;
 use Data::Dumper;
 
-my $host = $ARGV[0] || 'http://trpchads01.vm.searshc.com:8080';
+my $server = $ARGV[0] || 'http://localhost:8080';
 
-my $h = HBase::REST->new(server => $host, debug => 1);
-if (! $h) {
-    say STDERR "error: cannot connect to HBase @ $host";
-    exit(1);
-}
+my $h = HBase::REST->new(server => $server, debug => 1)
+    or die "error: cannot connect to HBase @ $server";
 
 my @tables = $h->list;
 foreach my $t (@tables) {
