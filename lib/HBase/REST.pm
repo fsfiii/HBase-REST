@@ -8,6 +8,7 @@ use Data::Dumper;
 use MIME::Base64;
 use CGI qw(escape);
 use LWP::UserAgent;
+use Time::HiRes qw(gettimeofday);
 
 =head1 NAME
 
@@ -68,7 +69,7 @@ sub put {
         return undef;
     }
 
-    my $ts = time;
+    my $ts = int(gettimeofday * 1000);
     my $path = sprintf '/%s/%s/%s/%s',
         escape($table), escape($row), escape($col), $ts;
 
@@ -76,7 +77,7 @@ sub put {
     $xml_data .= sprintf q|<CellSet><Row key='%s'>|, encode_base64($row); 
 
     $xml_data .= q|<Cell |;
-    $xml_data .= sprintf q|timestamp='%d' |, $ts;
+    $xml_data .= sprintf q|timestamp='%s' |, $ts;
     $xml_data .= sprintf q|column='%s'>|, encode_base64($col);
     $xml_data .= encode_base64($value);
     $xml_data .= q|</Cell>|;

@@ -22,11 +22,6 @@ say "************** PUT";
 my $rc = $h->put('rest-test', 'api-row', 'cf1:h', 'hello');
 say "rc: $rc";
 
-
-#say "************** SINGLE ROW TIMESTAMP";
-#@rows = $h->get('rest-test', 'row1', timestamp => 100);
-#print Dumper(@rows);
-#
-#say "************** MULTI ROW"
-#@rows = $h->get('rest-test', 'row*');
-#print Dumper(@rows);
+say "************** MULTI ROW";
+@rows = $h->get('rest-test', 'row*');
+print Dumper(@rows);
